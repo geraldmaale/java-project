@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class RegistrationForm {
+public class RegistrationForm extends JFrame {
     public User user;
 
     private JPasswordField txtPassword;
@@ -17,14 +17,14 @@ public class RegistrationForm {
     private JTextField txtPhoneNumber;
     private JPanel registerPanel;
 
-    public RegistrationForm(JFrame parent){
+    public RegistrationForm(){
         super();
-        parent.setTitle("Create a new account");
-        parent.setContentPane(registerPanel);
-        parent.setMinimumSize(new Dimension(450,460));
-        parent.setLocationRelativeTo(parent);
-        parent.pack();
-        parent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Create a new account");
+        setContentPane(registerPanel);
+        setMinimumSize(new Dimension(450,460));
+        setLocationRelativeTo(getParent());
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         btnRegister.addActionListener(new ActionListener() {
             @Override
@@ -41,7 +41,7 @@ public class RegistrationForm {
             }
         });
 
-        parent.setVisible(true);
+        setVisible(true);
     }
 
     private void registerUser() {
@@ -84,12 +84,9 @@ public class RegistrationForm {
 
     // Add a new user to the database
     private User addUser(User user) {
-        final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";
-        final String USERNAME = "appuser";
-        final String PASSWORD = "P@ssword1";
 
         try {
-            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            Connection conn = connectToDb();
             // Connected successfully
 
             Statement statement = conn.createStatement();
@@ -105,6 +102,9 @@ public class RegistrationForm {
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {
                 JOptionPane.showMessageDialog(registerPanel, "User successfully registered", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                StudentsList studentsList = new StudentsList();
+                studentsList.setVisible(true);
             }
             else {
                 JOptionPane.showMessageDialog(registerPanel, "Failed to register new user", "Try again", JOptionPane.ERROR_MESSAGE);
@@ -120,46 +120,7 @@ public class RegistrationForm {
         return user;
     }
 
-    // Delete the user
-    private void deleteUser(User user) {
-        final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";
-        final String USERNAME = "appuser";
-        final String PASSWORD = "P@ssword1";
-
-        try {
-
-            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            // Connected successfully
-
-            Statement statement = conn.createStatement();
-
-            // Delete the user
-            String sqlDelete = "DELETE FROM users WHERE userId = ?";
-
-            PreparedStatement preparedStatement = conn.prepareStatement(sqlDelete);
-            preparedStatement.setInt(1, user.Id);
-
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(registerPanel, "User successfully deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
-                JOptionPane.showMessageDialog(registerPanel, "Failed to delete user", "Try again", JOptionPane.ERROR_MESSAGE);
-            }
-
-            statement.close();
-            conn.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void dispose() {
-        System.exit(0);
-    }
-
-    private void CreateDatabase() {
+    private Connection connectToDb() {
         final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";
         final String USERNAME = "appuser";
         final String PASSWORD = "P@ssword1";
@@ -167,28 +128,15 @@ public class RegistrationForm {
         try {
             Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
             // Connected successfully
-
-            Statement statement = conn.createStatement();
-            String sql = "CREATE TABLE users (id SERIAL PRIMARY KEY, fullName VARCHAR(50), email VARCHAR(50), address VARCHAR(255), phoneNumber VARCHAR(10), password VARCHAR(25))";
-
-            int rowsInserted = statement.executeUpdate(sql);
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(registerPanel, "Database successfully created", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
-                JOptionPane.showMessageDialog(registerPanel, "Failed to create database", "Try again", JOptionPane.ERROR_MESSAGE);
-            }
-
-            statement.close();
-            conn.close();
-        }
-        catch (SQLException e) {
+            return conn;
+        } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
     public static void main(String[] args) {
-        RegistrationForm registrationForm = new RegistrationForm(new JFrame());
+        RegistrationForm registrationForm = new RegistrationForm();
 
         // Create database
          // registrationForm.CreateDatabase();

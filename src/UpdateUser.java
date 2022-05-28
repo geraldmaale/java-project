@@ -19,8 +19,8 @@ public class UpdateUser extends JFrame {
     public UpdateUser(int userId) {
         setTitle("Update User");
         setContentPane(UpdateUserPane);
+        setMinimumSize(new Dimension(450, 460));
         setLocationRelativeTo(getParent());
-        setMinimumSize(new Dimension());
         pack();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -96,6 +96,5 @@ public class UpdateUser extends JFrame {
     }
 
     public static void main(String[] args) {
-//        UpdateUser updateUser = new UpdateUser(UserId);
     }
 }

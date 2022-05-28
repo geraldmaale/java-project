@@ -57,6 +57,31 @@ public class StudentsList extends JFrame {
                 super.mouseClicked(e);
             }
         });
+        btnRegister.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Pass the selected user id to the UpdateUser class
+                RegistrationForm registrationForm = new RegistrationForm();
+                dispose();
+                registrationForm.setVisible(true);
+        }
+        });
+
+        btnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SelectedRow = tblStudents.getSelectedRow();
+
+                if (SelectedRow == -1) {
+                    JOptionPane.showMessageDialog(StudentsPanel, "Please select a user to delete", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                else{
+                    int selectedUserId = (int) tblStudents.getValueAt(SelectedRow, 0);
+                    deleteUser(selectedUserId);
+                }
+            }
+        });
     }
 
     private Connection connectToDb() {
@@ -90,9 +115,55 @@ public class StudentsList extends JFrame {
         }
     }
 
+    private void CreateDatabase() {
+        final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";
+        final String USERNAME = "appuser";
+        final String PASSWORD = "P@ssword1";
+
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            // Connected successfully
+
+            Statement statement = conn.createStatement();
+            String sql = "CREATE TABLE users (id SERIAL PRIMARY KEY, fullName VARCHAR(50), email VARCHAR(50), address VARCHAR(255), phoneNumber VARCHAR(10), password VARCHAR(25))";
+
+            int rowsInserted = statement.executeUpdate(sql);
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(this, "Database successfully created", "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Failed to create database", "Try again", JOptionPane.ERROR_MESSAGE);
+            }
+
+            statement.close();
+            conn.close();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         StudentsList studentsList = new StudentsList();
         studentsList.setVisible(true);
+    }
+
+    private void deleteUser(int selectedUserId) {
+        Connection conn = connectToDb();
+        Statement stat = null;
+        try {
+            stat = conn.createStatement();
+            int rowsDeleted = stat.executeUpdate("DELETE FROM users WHERE id = " + selectedUserId);
+            if (rowsDeleted > 0) {
+                JOptionPane.showMessageDialog(this, "User successfully deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
+                loadStudents();
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Failed to delete user", "Try again", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadUIButtons(boolean isVisible) {
