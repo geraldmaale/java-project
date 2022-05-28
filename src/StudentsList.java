@@ -4,12 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.*;
 
 public class StudentsList extends JFrame {
     private JTable tblStudents;
     private JPanel StudentsPanel;
-    private JButton btnUpdate;
+    private JButton btnEdit;
     private JButton btnDelete;
     private JButton btnRegister;
     private JPanel StudentsHeader;
@@ -25,21 +27,34 @@ public class StudentsList extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         loadStudents();
+        loadUIButtons(true);
 
         setVisible(true);
 
-        btnUpdate.addActionListener(new ActionListener() {
+        btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
                 SelectedRow = tblStudents.getSelectedRow();
 
-                int selectedUserId = (int) tblStudents.getValueAt(SelectedRow, 0);
-                System.out.println(selectedUserId);
+                if (SelectedRow == -1) {
+                    JOptionPane.showMessageDialog(StudentsPanel, "Please select a user to edit", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                else{
+                    int selectedUserId = (int) tblStudents.getValueAt(SelectedRow, 0);
+                    System.out.println(selectedUserId);
 
-                // Pass the selected user id to the UpdateUser class
-                UpdateUser updateUser = new UpdateUser(selectedUserId);
-                updateUser.setVisible(true);
+                    // Pass the selected user id to the UpdateUser class
+                    UpdateUser updateUser = new UpdateUser(selectedUserId);
+                    updateUser.setVisible(true);
+                }
+            }
+        });
+        tblStudents.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
             }
         });
     }
@@ -78,5 +93,10 @@ public class StudentsList extends JFrame {
     public static void main(String[] args) {
         StudentsList studentsList = new StudentsList();
         studentsList.setVisible(true);
+    }
+
+    private void loadUIButtons(boolean isVisible) {
+        btnDelete.setEnabled(isVisible);
+        btnEdit.setEnabled(isVisible);
     }
 }

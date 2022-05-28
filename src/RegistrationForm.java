@@ -131,6 +131,7 @@ public class RegistrationForm {
             // Connected successfully
 
             Statement statement = conn.createStatement();
+
             String sql = "UPDATE users SET fullName = ?, email = ?, address = ?, phoneNumber = ?, password = ? WHERE userId = ?";
 
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
