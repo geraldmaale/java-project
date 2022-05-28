@@ -120,45 +120,6 @@ public class RegistrationForm {
         return user;
     }
 
-    // Update the user in the database
-    private void updateUser(User user) {
-        final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";
-        final String USERNAME = "appuser";
-        final String PASSWORD = "P@ssword1";
-
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            // Connected successfully
-
-            Statement statement = conn.createStatement();
-
-            String sql = "UPDATE users SET fullName = ?, email = ?, address = ?, phoneNumber = ?, password = ? WHERE userId = ?";
-
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, user.FullName);
-            preparedStatement.setString(2, user.Email);
-            preparedStatement.setString(3, user.Address);
-            preparedStatement.setString(4, user.PhoneNumber);
-            preparedStatement.setString(5, user.Password);
-            preparedStatement.setInt(6, user.Id);
-
-            int rowsUpdated = preparedStatement.executeUpdate();
-            if (rowsUpdated > 0) {
-                JOptionPane.showMessageDialog(registerPanel, "User successfully updated", "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
-                JOptionPane.showMessageDialog(registerPanel, "Failed to update user", "Try again", JOptionPane.ERROR_MESSAGE);
-            }
-
-            statement.close();
-            conn.close();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     // Delete the user
     private void deleteUser(User user) {
         final String DB_URL = "jdbc:postgresql://localhost:5432/studentportaldb";

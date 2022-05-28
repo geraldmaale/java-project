@@ -19,7 +19,7 @@ public class UpdateUser extends JFrame {
     public UpdateUser(int userId) {
         setTitle("Update User");
         setContentPane(UpdateUserPane);
-        setLocationRelativeTo(this);
+        setLocationRelativeTo(getParent());
         setMinimumSize(new Dimension());
         pack();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -31,6 +31,31 @@ public class UpdateUser extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
+                StudentsList studentsList = new StudentsList();
+                studentsList.setVisible(true);
+            }
+        });
+        btnUpdate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // validate the user input
+                if (txtFullName.getText().isEmpty() || txtEmail.getText().isEmpty() || txtAddress.getText().isEmpty() || txtPhoneNumber.getText().isEmpty() || txtPassword.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(UpdateUserPane, "Please fill in all the fields", "Invalid Entry", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    Connection connection = connectToDb();
+                    Statement statement = connection.createStatement();
+                    String sql = "UPDATE users SET fullname = '" + txtFullName.getText() + "', email = '" + txtEmail.getText() + "', address = '" + txtAddress.getText() + "', phonenumber = '" + txtPhoneNumber.getText() + "', password = '" + txtPassword.getText() + "' WHERE id = " + UserId;
+                    statement.executeUpdate(sql);
+                    JOptionPane.showMessageDialog(UpdateUserPane, "User updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                    StudentsList studentsList = new StudentsList();
+                    studentsList.setVisible(true);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }
@@ -69,7 +94,6 @@ public class UpdateUser extends JFrame {
             return null;
         }
     }
-
 
     public static void main(String[] args) {
 //        UpdateUser updateUser = new UpdateUser(UserId);

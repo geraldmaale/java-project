@@ -22,7 +22,7 @@ public class StudentsList extends JFrame {
         setTitle("List of users");
         setContentPane(StudentsPanel);
         setMinimumSize(new Dimension(500, 460));
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(getParent());
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -43,10 +43,10 @@ public class StudentsList extends JFrame {
                 }
                 else{
                     int selectedUserId = (int) tblStudents.getValueAt(SelectedRow, 0);
-                    System.out.println(selectedUserId);
 
                     // Pass the selected user id to the UpdateUser class
                     UpdateUser updateUser = new UpdateUser(selectedUserId);
+                    dispose();
                     updateUser.setVisible(true);
                 }
             }
