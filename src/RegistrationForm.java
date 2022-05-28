@@ -229,7 +229,7 @@ public class RegistrationForm {
         RegistrationForm registrationForm = new RegistrationForm(new JFrame());
 
         // Create database
-        // registrationForm.CreateDatabase();
+         // registrationForm.CreateDatabase();
 
         User user = registrationForm.user;
         if (user != null) {
